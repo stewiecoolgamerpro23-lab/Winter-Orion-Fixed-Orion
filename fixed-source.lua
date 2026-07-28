@@ -803,27 +803,27 @@ function OrionLib:MakeWindow(WindowConfig)
 		local function GetElements(ItemParent)
 			local ElementFunction = {}
 			function ElementFunction:AddLabel(Text)
-				local LabelFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", OrionLib.Themes[OrionLib.SelectedTheme].Second, 0, 5), {
-					Size = UDim2.new(1, 0, 0, 30),
-					BackgroundTransparency = 0.7,
-					Parent = ItemParent
-				}), {
-					AddThemeObject(SetProps(MakeElement("Label", Text, 15), {
-						Size = UDim2.new(1, -12, 1, 0),
-						Position = UDim2.new(0, 12, 0, 0),
-						Font = Enum.Font.GothamBold,
-						Name = "Content",
-						TextColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Text
-					}), "Text"),
-					AddThemeObject(MakeElement("Stroke", OrionLib.Themes[OrionLib.SelectedTheme].Stroke), "Stroke")
-				}), "Second")
+	local LabelFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", OrionLib.Themes[OrionLib.SelectedTheme].Second, 0, 5), {
+		Size = UDim2.new(1, 0, 0, 30),
+		BackgroundTransparency = 0.7,
+		Parent = ItemParent
+	}), {
+		AddThemeObject(SetProps(MakeElement("Label", Text, 15), {
+			Size = UDim2.new(1, -12, 1, 0),
+			Position = UDim2.new(0, 12, 0, 0),
+			Font = Enum.Font.GothamBold,
+			Name = "Content",
+			TextColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Text
+		}), "Text"),
+		AddThemeObject(MakeElement("Stroke", OrionLib.Themes[OrionLib.SelectedTheme].Stroke), "Stroke")
+	}), "Second")
 
-				local LabelFunction = {}
-				function LabelFunction:Set(ToChange)
-					LabelFrame.Content.Text = ToChange
-				end
-				return LabelFunction
-			end
+	local LabelFunction = {}
+	function LabelFunction:Set(ToChange)
+		LabelFrame.Content.Text = ToChange
+	end
+	return LabelFunction
+end
 			function ElementFunction:AddParagraph(Text, Content)
 				Text = Text or "Text"
 				Content = Content or "Content"
