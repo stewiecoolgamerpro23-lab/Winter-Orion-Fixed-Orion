@@ -1261,127 +1261,128 @@ function OrionLib:MakeWindow(WindowConfig)
 				return Dropdown
 			end
 			function ElementFunction:AddBind(BindConfig)
-				BindConfig.Name = BindConfig.Name or "Bind"
-				BindConfig.Default = BindConfig.Default or Enum.KeyCode.Unknown
-				BindConfig.Hold = BindConfig.Hold or false
-				BindConfig.Callback = BindConfig.Callback or function() end
-				BindConfig.Flag = BindConfig.Flag or nil
-				BindConfig.Save = BindConfig.Save or false
+	BindConfig.Name = BindConfig.Name or "Bind"
+	BindConfig.Default = BindConfig.Default or Enum.KeyCode.Unknown
+	BindConfig.Hold = BindConfig.Hold or false
+	BindConfig.Callback = BindConfig.Callback or function() end
+	BindConfig.Flag = BindConfig.Flag or nil
+	BindConfig.Save = BindConfig.Save or false
 
-				local Bind = {Value, Binding = false, Type = "Bind", Save = BindConfig.Save}
-				local Holding = false
+	local Bind = {Value, Binding = false, Type = "Bind", Save = BindConfig.Save}
+	local Holding = false
 
-				local Click = SetProps(MakeElement("Button"), {
-					Size = UDim2.new(1, 0, 1, 0)
-				})
+	local Click = SetProps(MakeElement("Button"), {
+		Size = UDim2.new(1, 0, 1, 0)
+	})
 
-				local BindBox = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", OrionLib.Themes[OrionLib.SelectedTheme].Main, 0, 4), {
-					Size = UDim2.new(0, 24, 0, 24),
-					Position = UDim2.new(1, -12, 0.5, 0),
-					AnchorPoint = Vector2.new(1, 0.5)
-				}), {
-					AddThemeObject(MakeElement("Stroke", OrionLib.Themes[OrionLib.SelectedTheme].Stroke), "Stroke"),
-					AddThemeObject(SetProps(MakeElement("Label", BindConfig.Name, 14), {
-						Size = UDim2.new(1, 0, 1, 0),
-						Font = Enum.Font.GothamBold,
-						TextXAlignment = Enum.TextXAlignment.Center,
-						Name = "Value",
-						TextColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Text
-					}), "Text")
-				}), "Main")
+	local BindBox = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", OrionLib.Themes[OrionLib.SelectedTheme].Main, 0, 4), {
+		Size = UDim2.new(0, 24, 0, 24),
+		Position = UDim2.new(1, -12, 0.5, 0),
+		AnchorPoint = Vector2.new(1, 0.5)
+	}), {
+		AddThemeObject(MakeElement("Stroke", OrionLib.Themes[OrionLib.SelectedTheme].Stroke), "Stroke"),
+		AddThemeObject(SetProps(MakeElement("Label", BindConfig.Name, 14), {
+			Size = UDim2.new(1, 0, 1, 0),
+			Font = Enum.Font.GothamBold,
+			TextXAlignment = Enum.TextXAlignment.Center,
+			Name = "Value",
+			TextColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Text
+		}), "Text")
+	}), "Main")
 
-				local BindFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", OrionLib.Themes[OrionLib.SelectedTheme].Second, 0, 5), {
-					Size = UDim2.new(1, 0, 0, 38),
-					Parent = ItemParent
-				}), {
-					AddThemeObject(SetProps(MakeElement("Label", BindConfig.Name, 15), {
-						Size = UDim2.new(1, -12, 1, 0),
-						Position = UDim2.new(0, 12, 0, 0),
-						Font = Enum.Font.GothamBold,
-						Name = "Content",
-						TextColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Text
-					}), "Text"),
-					AddThemeObject(MakeElement("Stroke", OrionLib.Themes[OrionLib.SelectedTheme].Stroke), "Stroke"),
-					BindBox,
-					Click
-				}), "Second")
+	local BindFrame = AddThemeObject(SetChildren(SetProps(MakeElement("RoundFrame", OrionLib.Themes[OrionLib.SelectedTheme].Second, 0, 5), {
+		Size = UDim2.new(1, 0, 0, 38),
+		Parent = ItemParent
+	}), {
+		AddThemeObject(SetProps(MakeElement("Label", BindConfig.Name, 15), {
+			Size = UDim2.new(1, -12, 1, 0),
+			Position = UDim2.new(0, 12, 0, 0),
+			Font = Enum.Font.GothamBold,
+			Name = "Content",
+			TextColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Text
+		}), "Text"),
+		AddThemeObject(MakeElement("Stroke", OrionLib.Themes[OrionLib.SelectedTheme].Stroke), "Stroke"),
+		BindBox,
+		Click
+	}), "Second")
 
-				AddConnection(BindBox.Value:GetPropertyChangedSignal("Text"), function()
-					TweenService:Create(BindBox, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, BindBox.Value.TextBounds.X + 16, 0, 24)}):Play()
-				end)
+	AddConnection(BindBox.Value:GetPropertyChangedSignal("Text"), function()
+		TweenService:Create(BindBox, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(0, BindBox.Value.TextBounds.X + 16, 0, 24)}):Play()
+	end)
 
-				AddConnection(Click.InputEnded, function(Input)
-					if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-						if Bind.Binding then return end
-						Bind.Binding = true
-						BindBox.Value.Text = ""
-					end
-				end)
+	AddConnection(Click.InputEnded, function(Input)
+		if Input.UserInputType == Enum.UserInputType.MouseButton1 then
+			if Bind.Binding then return end
+			Bind.Binding = true
+			BindBox.Value.Text = ""
+		end
+	end)
 
-				AddConnection(UserInputService.InputBegan, function(Input)
-					if UserInputService:GetFocusedTextBox() then return end
-					if (Input.KeyCode.Name == Bind.Value or Input.UserInputType.Name == Bind.Value) and not Bind.Binding then
-						if BindConfig.Hold then
-							Holding = true
-							BindConfig.Callback(Holding)
-						else
-							BindConfig.Callback()
-						end
-					elseif Bind.Binding then
-						local Key
-						pcall(function()
-							if not CheckKey(BlacklistedKeys, Input.KeyCode) then
-								Key = Input.KeyCode
-							end
-						end)
-						pcall(function()
-							if CheckKey(WhitelistedMouse, Input.UserInputType) and not Key then
-								Key = Input.UserInputType
-							end
-						end)
-						Key = Key or Bind.Value
-						Bind:Set(Key)
-						SaveCfg(game.GameId)
-					end
-				end)
-
-				AddConnection(UserInputService.InputEnded, function(Input)
-					if Input.KeyCode.Name == Bind.Value or Input.UserInputType.Name == Bind.Value then
-						if BindConfig.Hold and Holding then
-							Holding = false
-							BindConfig.Callback(Holding)
-						end
-					end
-				end)
-
-				AddConnection(Click.MouseEnter, function()
-					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)}):Play()
-				end)
-
-				AddConnection(Click.MouseLeave, function()
-					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Second}):Play()
-				end)
-
-				AddConnection(Click.MouseButton1Up, function()
-					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)}):Play()
-				end)
-
-				AddConnection(Click.MouseButton1Down, function()
-					TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 6)}):Play()
-				end)
-
-				function Bind:Set(Key)
-					Bind.Binding = false
-					Bind.Value = Key or Bind.Value
-					Bind.Value = Bind.Value.Name or Bind.Value					BindBox.Value.Text = Bind.Value
+	AddConnection(UserInputService.InputBegan, function(Input)
+		if UserInputService:GetFocusedTextBox() then return end
+		if (Input.KeyCode.Name == Bind.Value or Input.UserInputType.Name == Bind.Value) and not Bind.Binding then
+			if BindConfig.Hold then
+				Holding = true
+				BindConfig.Callback(Holding)
+			else
+				BindConfig.Callback()
+			end
+		elseif Bind.Binding then
+			local Key
+			pcall(function()
+				if not CheckKey(BlacklistedKeys, Input.KeyCode) then
+					Key = Input.KeyCode
 				end
-
-				Bind:Set(BindConfig.Default)
-				if BindConfig.Flag then				
-					OrionLib.Flags[BindConfig.Flag] = Bind
+			end)
+			pcall(function()
+				if CheckKey(WhitelistedMouse, Input.UserInputType) and not Key then
+					Key = Input.UserInputType
 				end
-				return Bind
-			end  
+			end)
+			Key = Key or Bind.Value
+			Bind:Set(Key)
+			SaveCfg(game.GameId)
+		end
+	end)
+
+	AddConnection(UserInputService.InputEnded, function(Input)
+		if Input.KeyCode.Name == Bind.Value or Input.UserInputType.Name == Bind.Value then
+			if BindConfig.Hold and Holding then
+				Holding = false
+				BindConfig.Callback(Holding)
+			end
+		end
+	end)
+
+	AddConnection(Click.MouseEnter, function()
+		TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+	end)
+
+	AddConnection(Click.MouseLeave, function()
+		TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = OrionLib.Themes[OrionLib.SelectedTheme].Second}):Play()
+	end)
+
+	AddConnection(Click.MouseButton1Up, function()
+		TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 3, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 3)}):Play()
+	end)
+
+	AddConnection(Click.MouseButton1Down, function()
+		TweenService:Create(BindFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(OrionLib.Themes[OrionLib.SelectedTheme].Second.R * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.G * 255 + 6, OrionLib.Themes[OrionLib.SelectedTheme].Second.B * 255 + 6)}):Play()
+	end)
+
+	function Bind:Set(Key)
+		Bind.Binding = false
+		Bind.Value = Key or Bind.Value
+		Bind.Value = Bind.Value.Name or Bind.Value
+		BindBox.Value.Text = Bind.Value
+	end
+
+	Bind:Set(BindConfig.Default)
+	if BindConfig.Flag then				
+		OrionLib.Flags[BindConfig.Flag] = Bind
+	end
+	return Bind
+end
 			function ElementFunction:AddTextbox(TextboxConfig)
 				TextboxConfig = TextboxConfig or {}
 				TextboxConfig.Name = TextboxConfig.Name or "Textbox"
